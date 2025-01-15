@@ -85,11 +85,11 @@ async def ban_member(
     reason: str = None
 ):
     """
-    Bane um membro do servidor.
+    Bane um membro do servidor e envia uma DM ao usuário com o motivo do ban.
     Uso: /ban @usuario [motivo]
     Permissão necessária: ban_members
     """
-    # Verifica se o usuário está tentando se banir ou banir o bot
+    # Evita banir a si mesmo ou o bot
     if member == inter.author:
         await inter.response.send_message("Você não pode banir a si mesmo!", ephemeral=True)
         return
@@ -97,6 +97,18 @@ async def ban_member(
         await inter.response.send_message("Você não pode banir o próprio bot!", ephemeral=True)
         return
 
+    dm_text = (
+        f"Você foi banido do servidor **{inter.guild.name}**.\n"
+        f"Motivo: {reason if reason else 'Não especificado'}"
+    )
+    try:
+        await member.send(dm_text)
+    except disnake.Forbidden:
+        pass
+    except Exception as e:
+        print(f"Erro ao enviar DM de ban: {e}")
+
+    # Agora, realiza o ban
     try:
         await member.ban(reason=reason)
         await inter.response.send_message(
