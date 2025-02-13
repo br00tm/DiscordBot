@@ -1,2 +1,2 @@
-disnake
-python-dotenv
+discord.py
+aiohttp
