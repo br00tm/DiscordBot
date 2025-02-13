@@ -9,7 +9,7 @@ import random
 buyers  = [1]  # EDIT IT (Discord User ID)
 admins  = [1]  # EDIT IT (Discord User ID)
 owners  = [1]  # EDIT IT (Discord User ID)
-token   = 'MTMyODkzMDM0MDY4NDY5NzY1MQ.GmBr_U.fqjlo9BqktTdthunzQ4rB0vUiLv1TkOGNsJU1w' # EDIT IT (Bot Token)
+token   = TOKEN # EDIT IT (Bot Token)
 bot     = commands.Bot(command_prefix='.')
 
 l4methods = ['TCP-BYPASS', 'UDP-BYPASS', 'OVH-KILL', 'NFO-KILL']
